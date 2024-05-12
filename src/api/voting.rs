@@ -1,5 +1,5 @@
 use crate::db::establish_connection;
-use crate::models::vote::{self, FullSignature, PartialSignature};
+use crate::models::vote::{FullSignature, PartialSignature};
 use crate::models::votings::{NewVoting, Voting};
 use diesel::prelude::*;
 use rocket::serde::json::Json;
@@ -150,7 +150,7 @@ async fn update_vote(
         .ok()
 }
 
-#[get("/<id>/vote/count")]
+#[get("/<id>/count")]
 async fn count_votes(id: uuid::Uuid) -> Option<Json<Vec<u32>>> {
     use crate::schema::voting;
     let connection = &mut establish_connection();

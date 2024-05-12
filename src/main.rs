@@ -28,5 +28,6 @@ impl Fairing for ServerFairing {
 
 #[launch]
 fn rocket() -> _ {
+    crate::db::run_migrations(&mut crate::db::establish_connection()).unwrap();
     rocket::build().attach(api::stage()).attach(ServerFairing)
 }
