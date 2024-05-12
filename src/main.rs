@@ -26,8 +26,23 @@ impl Fairing for ServerFairing {
     }
 }
 
+use rocket::http::Method;
+use rocket_cors::{AllowedOrigins, CorsOptions};
+
 #[launch]
 fn rocket() -> _ {
+    let cors = CorsOptions::default()
+        .allowed_origins(AllowedOrigins::all())
+        .allowed_methods(
+            vec![Method::Get, Method::Post, Method::Put]
+                .into_iter()
+                .map(From::from)
+                .collect(),
+        )
+        .allow_credentials(true);
     crate::db::run_migrations(&mut crate::db::establish_connection()).unwrap();
-    rocket::build().attach(api::stage()).attach(ServerFairing)
+    rocket::build()
+        .attach(api::stage())
+        .attach(ServerFairing)
+        .attach(cors.to_cors().unwrap())
 }
